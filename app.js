@@ -71,15 +71,33 @@ const menu = [
     img: './images/item-9.jpeg',
     desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
   },
+  {
+    id: 10,
+    title: 'quarantine buddy',
+    category: 'dinner',
+    price: 39.99,
+    img: './images/item-10.jpeg',
+    desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
+  },
 ];
-
+// Assinging elements to their values
 const sectionCenter = document.querySelector('.section-center');
+// This Grabs all the filter buttons in the HTML DOM
+
+const btnContainer = document.querySelector('.btn-container');
+
+// Loads all categories to the window, once the page loads and calls all the functions for functionalities of the page
 window.addEventListener('DOMContentLoaded', () => {
-  loadPage();
+  loadPage(menu);
+  displayMenuBtn(menu);
+  const filterBtns = btnContainer.querySelectorAll('.filter-btn');
+  // This filters the page content by the JSON object categories by using data-sets(hard coded into the html files)
+  filterFunc(filterBtns);
 });
 
-const loadPage = () => {
-  let displayMenu = menu.map((item) => {
+// This Function loads the desired content on the page once it is called
+const loadPage = (menuItems) => {
+  let displayMenu = menuItems.map((item) => {
     return ` <article class="menu-item">
                     <img src=${item.img} class="photo" alt=${item.title} />
                     <div class="item-info">
@@ -95,4 +113,41 @@ const loadPage = () => {
   });
   displayMenu = displayMenu.join('');
   sectionCenter.innerHTML = displayMenu;
+};
+
+// Function to display the filter buttons based on the categories in the JSON file
+
+const displayMenuBtn = (menu) => {
+  const categories = menu.reduce(
+    (values, item) => {
+      if (!values.includes(item.category)) values.push(item.category);
+      return values;
+    },
+    ['all']
+  );
+  const categoryBtn = categories
+    .map((category) => {
+      return `<button class="filter-btn" type="button" data-id=${category}>${category}</button>`;
+    })
+    .join('');
+
+  btnContainer.innerHTML = categoryBtn;
+};
+
+// This function filters the page content by the JSON object categories by using data-sets(hard coded into the html files)
+const filterFunc = (filterArr) => {
+  filterArr.forEach((filterBtn) => {
+    // Adding evnetListeners to the button
+    filterBtn.addEventListener('click', (e) => {
+      // sorting the clicked button's data-set
+      const category = e.currentTarget.dataset.id;
+      // Filtering each the JSON file to sort out the matching categories with to the button that was clicked and returning an array of filtered category.
+      const menuCategory = menu.filter((menuItem) => {
+        if (category === menuItem.category) return menuItem.category;
+        if (category === 'all') return menuItem.category;
+      });
+      // loading the new sorted category to display
+      loadPage(menuCategory);
+    });
+  });
 };
